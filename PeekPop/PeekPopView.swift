@@ -13,7 +13,7 @@ class PeekPopView: UIView {
     //MARK: Constants
     
     // These are 'magic' values
-    let targePreviewPadding = CGSize(width: 28, height: 140)
+    var targePreviewPadding = CGSize(width: 28, height: 140)
     
     var sourceViewCenter = CGPoint.zero
     var sourceToCenterXDelta: CGFloat = 0.0
@@ -82,6 +82,18 @@ class PeekPopView: UIView {
     }
     
     func didAppear() {
+        if let targetViewControllerView = targetViewControllerView {
+            var frame = targetViewControllerView.frame
+            frame.size.width = bounds.width - targePreviewPadding.width
+            
+            targetViewControllerView.frame = frame
+            targetViewControllerView.setNeedsLayout()
+            targetViewControllerView.layoutIfNeeded()
+            
+            let targetViewHeight = targetViewControllerView.systemLayoutSizeFitting(UILayoutFittingCompressedSize).height
+            targePreviewPadding.height = bounds.height - targetViewHeight
+        }
+        
         blurredBaseImageView.frame = self.bounds
         blurredImageViewFirst.frame = self.bounds
         blurredImageViewSecond.frame = self.bounds
@@ -184,8 +196,7 @@ class PeekPopTargetPreviewView: UIView {
         imageView.frame = imageViewFrame
         imageView.center = CGPoint(x: self.bounds.size.width / 2, y: self.bounds.size.height / 2)
 
-        viewControllerView?.frame = imageViewFrame
-        viewControllerView?.center.x = (self.bounds.size.width / 2)
+        viewControllerView?.frame = bounds
     }
 
     func setup() {
